@@ -125,7 +125,40 @@ class EnquiryMgr extends SGL_Manager
     public function executeForm($input, $output)
     {
         if (isset($input->content_form)) {
+            foreach ($input->content_form->aAttribs as $key => $element) {
+                $input->content_form->aAttribs[$key] = SGL_Attribute::getById($element->id);
+            }
 
+            SGL::logMessage(null, PEAR_LOG_DEBUG);
+            $output->template = 'form.html';
+
+            require_once SGL_LIB_DIR . '/SGL/WizardController.php';
+            require_once 'PageForm.php';
+            require_once 'PageConfirm.php';
+
+            // Instantiate the Controller
+            $controller =& new SGL_WizardController('clientWizard');
+
+            // Add pages to Controller
+            $controller->addPage(new PageForm('page_form', 'post', '', null, $input->content_form));
+            $controller->addPage(new PageConfirm('page_confirm'));
+
+            // Add actions to controller
+            $controller->addAction('display', new SGL_WizardControllerDisplay());
+            $controller->addAction('jump', new SGL_WizardControllerJump());
+            $controller->addAction('process', new SGL_WizardControllerProcess());
+
+            // Process the request
+            $controller->run();
+
+            // Get the current page name
+            list($pageName, $actionName) = $controller->getActionName();
+            $page = $controller->getPage($pageName);
+
+            // Set page output vars
+            $output->wizardOutput = $page->wizardOutput;
+            $output->wizardData = $page->wizardData;
+            SGL::logMessage(null, PEAR_LOG_DEBUG);
         } else {
             $output->template = 'error.html';
         }

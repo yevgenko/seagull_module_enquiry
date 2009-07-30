@@ -1,2 +1,21 @@
-<h1>Not implemented</h1>
-<p>We are sorry, this feature not yet implemented.</p>
+<div class="alignCenter">
+    <h1 class="pageTitle">
+        {translate(pageTitle)} {if:mode}:: {translate(mode)}{end:}
+    </h1><span flexy:if="msgGet()">{msgGet()}</span>
+
+    <table class="wide">
+        <tr>
+            <td align="center">{wizardOutput:h}</td>
+        </tr>
+    </table>
+
+        {if:wizardData}
+        <table border=0>
+        <thead>{translate(#Form Results#)}</thead>
+        <tr flexy:foreach="wizardData,key,val">
+            <th>{key}</th><td>{val}</td>
+        </tr>
+        </table>
+        {end:}
+
+</div>
