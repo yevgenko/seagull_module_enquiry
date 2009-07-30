@@ -50,6 +50,8 @@
  * @license  http://opensource.org/licenses/bsd-license.php BSD License
  * @link     http://github.com/yviktorov/seagull_module_enquiry/tree/master
  */
+require_once SGL_MOD_DIR . '/cms/lib/Content.php';
+
 class EnquiryMgr extends SGL_Manager
 {
     /**
@@ -92,6 +94,13 @@ class EnquiryMgr extends SGL_Manager
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->template    = $this->template;
+
+        if ($req->get('formName') && stristr($req->get('formName'), $this->conf['EnquiryMgr']['allowedTypes'])) {
+            $input->content_form = SGL_Content::getByType($req->get('formName'));
+        } else {
+            SGL::raiseError('The specified form, ' . $req->get('formName') .
+                ' does not allowed', SGL_ERROR_NOMETHOD);
+        }
         $input->submitted   = $req->get('submitted');
 
         $input->action      = 'form';
@@ -115,6 +124,10 @@ class EnquiryMgr extends SGL_Manager
      */
     public function executeForm($input, $output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if (isset($input->content_form)) {
+
+        } else {
+            $output->template = 'error.html';
+        }
     }
 }
