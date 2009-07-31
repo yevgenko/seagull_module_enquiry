@@ -41,6 +41,8 @@
  * @link      http://github.com/yviktorov/seagull_module_enquiry/tree/master
  */
 
+require_once SGL_MOD_DIR . '/cms/lib/Content.php';
+
 /**
  * To allow users to submit specific enquiries
  *
@@ -50,8 +52,6 @@
  * @license  http://opensource.org/licenses/bsd-license.php BSD License
  * @link     http://github.com/yviktorov/seagull_module_enquiry/tree/master
  */
-require_once SGL_MOD_DIR . '/cms/lib/Content.php';
-
 class EnquiryMgr extends SGL_Manager
 {
     /**
@@ -94,12 +94,16 @@ class EnquiryMgr extends SGL_Manager
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->template    = $this->template;
-
-        if ($req->get('formName') && stristr($req->get('formName'), $this->conf['EnquiryMgr']['allowedTypes'])) {
-            $input->content_form = SGL_Content::getByType($req->get('formName'));
+        $allowed_types = explode(',', $this->conf['EnquiryMgr']['allowedTypes']);
+        if ($req->get('type') && in_array($req->get('type'), $allowed_types)) {
+            $input->content_form = SGL_Content::getByType('adsssss');
+            if (!is_object($input->content_form)||$input->content_form->typeName != $req->get('type')) {
+                SGL::raiseError('The specified form, ' . $req->get('type') . ' does not exist', SGL_ERROR_NOMETHOD);
+                $this->validated = false;
+            }
         } else {
-            SGL::raiseError('The specified form, ' . $req->get('formName') .
-                ' does not allowed', SGL_ERROR_NOMETHOD);
+            SGL::raiseError('The specified form, ' . $req->get('type') . ' does not allowed', SGL_ERROR_NOMETHOD);
+            $this->validated = false;
         }
         $input->submitted   = $req->get('submitted');
 
@@ -124,43 +128,39 @@ class EnquiryMgr extends SGL_Manager
      */
     public function executeForm($input, $output)
     {
-        if (isset($input->content_form)) {
-            foreach ($input->content_form->aAttribs as $key => $element) {
-                $input->content_form->aAttribs[$key] = SGL_Attribute::getById($element->id);
-            }
-
-            SGL::logMessage(null, PEAR_LOG_DEBUG);
-            $output->template = 'form.html';
-
-            require_once SGL_LIB_DIR . '/SGL/WizardController.php';
-            require_once 'PageForm.php';
-            require_once 'PageConfirm.php';
-
-            // Instantiate the Controller
-            $controller =& new SGL_WizardController('clientWizard');
-
-            // Add pages to Controller
-            $controller->addPage(new PageForm('page_form', 'post', '', null, $input->content_form));
-            $controller->addPage(new PageConfirm('page_confirm'));
-
-            // Add actions to controller
-            $controller->addAction('display', new SGL_WizardControllerDisplay());
-            $controller->addAction('jump', new SGL_WizardControllerJump());
-            $controller->addAction('process', new SGL_WizardControllerProcess());
-
-            // Process the request
-            $controller->run();
-
-            // Get the current page name
-            list($pageName, $actionName) = $controller->getActionName();
-            $page = $controller->getPage($pageName);
-
-            // Set page output vars
-            $output->wizardOutput = $page->wizardOutput;
-            $output->wizardData = $page->wizardData;
-            SGL::logMessage(null, PEAR_LOG_DEBUG);
-        } else {
-            $output->template = 'error.html';
+        foreach ($input->content_form->aAttribs as $key => $element) {
+            $input->content_form->aAttribs[$key] = SGL_Attribute::getById($element->id);
         }
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->template = 'form.html';
+
+        include_once SGL_LIB_DIR . '/SGL/WizardController.php';
+        include_once 'PageForm.php';
+        include_once 'PageConfirm.php';
+
+        // Instantiate the Controller
+        $controller =& new SGL_WizardController('clientWizard');
+
+        // Add pages to Controller
+        $controller->addPage(new PageForm('page_form', $input->content_form));
+        $controller->addPage(new PageConfirm('page_confirm'));
+
+        // Add actions to controller
+        $controller->addAction('display', new SGL_WizardControllerDisplay());
+        $controller->addAction('jump', new SGL_WizardControllerJump());
+        $controller->addAction('process', new SGL_WizardControllerProcess());
+
+        // Process the request
+        $controller->run();
+
+        // Get the current page name
+        list($pageName, $actionName) = $controller->getActionName();
+        $page = $controller->getPage($pageName);
+
+        // Set page output vars
+        $output->wizardOutput = $page->wizardOutput;
+        $output->wizardData = $page->wizardData;
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 }
