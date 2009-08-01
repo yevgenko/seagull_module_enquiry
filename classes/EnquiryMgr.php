@@ -94,20 +94,25 @@ class EnquiryMgr extends SGL_Manager
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->template    = $this->template;
+        $input->action      = 'form';
         $input->submitted   = $req->get('submitted');
         $input->contentType = ($req->get('type'))?$req->get('type'):'';
 
         $allowed_types = explode(',', $this->conf['EnquiryMgr']['allowedTypes']);
         if (in_array($input->contentType, $allowed_types)) {
-            $input->content_form = SGL_Content::getByType($input->contentType);
-            if (PEAR::isError($input->content_form)) {
-                SGL::raiseError($input->contentType . ' content type does not exist', SGL_ERROR_RESOURCENOTFOUND);
+            $input->oContentType = SGL_Content::getByType($input->contentType);
+            if (PEAR::isError($input->oContentType)) {
+                SGL::raiseError(
+                    $input->contentType . ' content type does not exist',
+                    SGL_ERROR_RESOURCENOTFOUND
+                );
             }
         } else {
-            SGL::raiseError($input->contentType . ' content type does not allowed', SGL_ERROR_RESOURCENOTFOUND);
+            SGL::raiseError(
+                $input->contentType . ' content type does not allowed',
+                SGL_ERROR_RESOURCENOTFOUND
+            );
         }
-
-        $input->action      = 'form';
     }
 
     /**
@@ -128,8 +133,9 @@ class EnquiryMgr extends SGL_Manager
      */
     public function executeForm($input, $output)
     {
-        foreach ($input->content_form->aAttribs as $key => $element) {
-            $input->content_form->aAttribs[$key] = SGL_Attribute::getById($element->id);
+        foreach ($input->oContentType->aAttribs as $key => $element) {
+            $input->oContentType->aAttribs[$key]
+                = SGL_Attribute::getById($element->id);
         }
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -143,7 +149,7 @@ class EnquiryMgr extends SGL_Manager
         $controller =& new SGL_WizardController('clientWizard');
 
         // Add pages to Controller
-        $controller->addPage(new PageForm('page_form', $input->content_form));
+        $controller->addPage(new PageForm('page_form', $input->oContentType));
         $controller->addPage(new PageConfirm('page_confirm'));
 
         // Add actions to controller
