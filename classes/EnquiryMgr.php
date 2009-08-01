@@ -94,18 +94,17 @@ class EnquiryMgr extends SGL_Manager
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->template    = $this->template;
+        $input->submitted   = $req->get('submitted');
+
         $allowed_types = explode(',', $this->conf['EnquiryMgr']['allowedTypes']);
         if ($req->get('type') && in_array($req->get('type'), $allowed_types)) {
             $input->content_form = SGL_Content::getByType('adsssss');
             if (!is_object($input->content_form)||$input->content_form->typeName != $req->get('type')) {
-                SGL::raiseError('The specified form, ' . $req->get('type') . ' does not exist', SGL_ERROR_NOMETHOD);
-                $this->validated = false;
+                SGL::raiseError($req->get('type') . ' content type does not exist', SGL_ERROR_RESOURCENOTFOUND);
             }
         } else {
-            SGL::raiseError('The specified form, ' . $req->get('type') . ' does not allowed', SGL_ERROR_NOMETHOD);
-            $this->validated = false;
+            SGL::raiseError($req->get('type') . ' content type does not allowed', SGL_ERROR_RESOURCENOTFOUND);
         }
-        $input->submitted   = $req->get('submitted');
 
         $input->action      = 'form';
     }
