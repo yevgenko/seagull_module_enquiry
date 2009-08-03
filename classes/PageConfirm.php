@@ -62,12 +62,11 @@ class PageConfirm extends HTML_QuickForm_Page
     { 
         $this->_formBuilt = true;
 
-        // Add some elements to the form
-        $this->addElement('header', null, SGL_String::translate('Thanl You'));
-
         //  submit
-        $this->addElement('submit', $this->getButtonName('back'), SGL_String::translate('<< Back'));
+        $prevnext[] =& $this->createElement('submit', $this->getButtonName('back'), SGL_String::translate('<< Back'));
+        $prevnext[] =& $this->createElement('submit', $this->getButtonName('next'), SGL_String::translate('Finish >>'));
+        $this->addGroup($prevnext, 'button', '', '&nbsp;', false);
 
-        $this->setDefaultAction('back');
+        $this->setDefaultAction('next');
     }
 }
