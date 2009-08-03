@@ -140,7 +140,6 @@ class EnquiryMgr extends SGL_Manager
                 = SGL_Attribute::getById($element->id);
         }
 
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'form.html';
 
         include_once SGL_LIB_DIR . '/SGL/WizardController.php';
@@ -151,7 +150,15 @@ class EnquiryMgr extends SGL_Manager
         $controller =& new SGL_WizardController('clientWizard');
 
         // Add pages to Controller
-        $controller->addPage(new PageForm('page_form', $input->oContentType));
+        $controller->addPage(
+            new PageForm(
+                'page_form',
+                $input->oContentType,
+                'post',
+                '',
+                ''
+            )
+        );
         $controller->addPage(new PageConfirm('page_confirm'));
 
         // Add actions to controller
@@ -167,8 +174,16 @@ class EnquiryMgr extends SGL_Manager
         $page = $controller->getPage($pageName);
 
         // Set page output vars
-        $output->wizardOutput = $page->wizardOutput;
-        $output->wizardData = $page->wizardData;
+        if ($pageName == 'page_confirm') {
+            $output->wizardData = $page->wizardData;
+        }
+
+        if(!isset($page->wizardOutput)) {
+            // Do somsing - data is submited
+            $output->template = 'thank_you.html';
+        } else {
+            $output->wizardOutput = $page->wizardOutput;
+        }
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 }
