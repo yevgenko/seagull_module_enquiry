@@ -7,9 +7,9 @@
     <tr>
         <td align="left">
             <table border=0>
-                <thead>{translate(#Form Results#)}</thead>
+                <thead>{translate(#Verify data you entered#)}</thead>
                     <tr flexy:foreach="wizardData,key,val">
-                        <th>{key}</th><td>{val}</td>
+                        <th>{humanise(key)}</th><td>{val}</td>
                     </tr>
             </table>
         </td>
