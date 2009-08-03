@@ -58,15 +58,20 @@ class PageForm extends HTML_QuickForm_Page
     * @param string $formName     name of generated form
     * @param string $content_type cms object assigned to form
     * @param string $method       posting method
+    * @param string $action       action url
     * @param string $target       url to execute form
     * @param string $attributes   attributes for form
     *
     * @access public
     */
-    function PageForm($formName, $content_type, $method = 'post', $target = '', $attributes = null)
+    function PageForm($formName, $content_type, $method = 'post', $action = '', $target = '', $attributes = null)
     {
-        $this->HTML_QuickForm_Page($formName, $method, '', $target, $attributes);
+        $this->HTML_QuickForm_Page($formName, $method, $target, $attributes);
         $this->content = $content_type;
+        if ($action != '') {
+            $this->setAttribute('action', $action);
+        }
+
     }
 
     /**
@@ -81,13 +86,91 @@ class PageForm extends HTML_QuickForm_Page
 
         // Add some elements to the form
         $this->addElement('header', null, SGL_String::translate('Contact Details'));
-        $this->addElement('text', 'name', SGL_String::translate('Name'), array('size' => 50, 'maxlength' => 255));
-        $this->addElement('text', 'email', SGL_String::translate('Email'), array('size' => 50, 'maxlength' => 255));
+        $this->addElement(
+            'text',
+            'name',
+            SGL_String::translate('Name'),
+            array('size' => 50, 'maxlength' => 255)
+        );
+        $this->addElement(
+            'text',
+            'email',
+            SGL_String::translate('Email'),
+            array('size' => 50, 'maxlength' => 255)
+        );
 
         foreach ($this->content->aAttribs as $element) {
             switch ($element->typeName) {
             case 'Large text':
-                    $this->addElement('textarea', $element->name, $element->alias, array('style' => 'width: 300px;', 'cols' => 50, 'rows' => '7'));
+                    $this->addElement(
+                        'textarea',
+                        $element->name,
+                        $element->alias,
+                        array(
+                            'cols' => 50,
+                            'rows' => '7'
+                        )
+                    );
+                break;
+            case 'Rich text':
+                    $this->addElement(
+                        'textarea',
+                        $element->name,
+                        $element->alias,
+                        array(
+                            'cols' => 50,
+                            'rows' => '7'
+                        )
+                    );
+                break;
+            case 'Combo':
+                    $this->addElement(
+                        'select',
+                        $element->name,
+                        $element->alias,
+                        $element->getParams()
+                    );
+                break;
+            case 'Checkbox':
+                    $checkboxes = array();
+                foreach ($element->getParams() as $value => $label) {
+                    $checkboxes[] = $this->createElement(
+                        'checkbox',
+                        '',
+                        null,
+                        $label
+                    );
+                }
+                    $this->addGroup(
+                        $checkboxes,
+                        $element->name,
+                        $element->alias,
+                        ' '
+                    );
+                break;
+            case 'Radio':
+                    $radio = array();
+                foreach ($element->getParams() as $value => $label) {
+                    $radio[] = $this->createElement(
+                        'radio',
+                        null,
+                        null,
+                        $label,
+                        $value
+                    );
+                }
+                    $this->addGroup(
+                        $radio,
+                        $element->name,
+                        $element->alias,
+                        ' '
+                    );
+                break;
+            case 'File':
+                    $this->addElement('file', $element->name, $element->alias);
+                break;
+            case 'Date':
+                    $this->addElement('date', $element->name, $element->alias);
                 break;
             default:
                     $this->addElement('text', $element->name, $element->alias);
@@ -95,11 +178,29 @@ class PageForm extends HTML_QuickForm_Page
             }
         }
 
-        $this->addElement('submit', $this->getButtonName('next'), SGL_String::translate('Submit'));
-
-        $this->addRule('name', SGL_String::translate('Please enter your name'), 'required');
-        $this->addRule('email', SGL_String::translate('Please enter your email'), 'required');
-
+        $resetnext[] =& $this->createElement(
+            'submit',
+            $this->getButtonName('next'),
+            SGL_String::translate('Submit'),
+            array('id'=>'submit')
+        );
+        $resetnext[] =& $this->createElement(
+            'reset',
+            $this->getButtonName('reset'),
+            SGL_String::translate('Reset'),
+            array('id'=>'reset')
+        );
+        $this->addGroup($resetnext, 'button', '', '&nbsp;', false);
+        $this->addRule(
+            'name',
+            SGL_String::translate('Please enter your name'),
+            'required'
+        );
+        $this->addRule(
+            'email',
+            SGL_String::translate('Please enter your email'),
+            'required'
+        );
         $this->setDefaultAction('next');
     }
 }
