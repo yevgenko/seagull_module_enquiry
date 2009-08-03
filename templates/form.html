@@ -1,21 +1,19 @@
-<div class="alignCenter">
-    <h1 class="pageTitle">
+<h1 class="pageTitle">
         {translate(pageTitle)} {if:mode}:: {translate(mode)}{end:}
-    </h1><span flexy:if="msgGet()">{msgGet()}</span>
-
-    <table class="wide">
-        <tr>
-            <td align="center">{wizardOutput:h}</td>
-        </tr>
-    </table>
-
-        {if:wizardData}
-        <table border=0>
-        <thead>{translate(#Form Results#)}</thead>
-        <tr flexy:foreach="wizardData,key,val">
-            <th>{key}</th><td>{val}</td>
-        </tr>
-        </table>
-        {end:}
-
-</div>
+</h1>
+<div class="message">{msgGet()}</div>
+<table class="wide">
+    {if:wizardData}
+    <tr>
+        <td align="left">
+            <table border=0>
+                <thead>{translate(#Form Results#)}</thead>
+                    <tr flexy:foreach="wizardData,key,val">
+                        <th>{key}</th><td>{val}</td>
+                    </tr>
+            </table>
+        </td>
+    </tr>
+    {end:}
+</table>
+{wizardOutput:h}
