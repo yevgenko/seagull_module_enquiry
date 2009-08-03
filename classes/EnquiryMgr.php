@@ -135,6 +135,8 @@ class EnquiryMgr extends SGL_Manager
      */
     public function executeForm($input, $output)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         foreach ($input->oContentType->aAttribs as $key => $element) {
             $input->oContentType->aAttribs[$key]
                 = SGL_Attribute::getById($element->id);
@@ -184,6 +186,5 @@ class EnquiryMgr extends SGL_Manager
         } else {
             $output->wizardOutput = $page->wizardOutput;
         }
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 }
