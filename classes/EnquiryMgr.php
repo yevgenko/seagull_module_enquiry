@@ -180,7 +180,7 @@ class EnquiryMgr extends SGL_Manager
             $output->wizardData = $page->wizardData;
         }
 
-        if(!isset($page->wizardOutput)) {
+        if (!isset($page->wizardOutput)) {
             // Do somsing - data is submited
             $output->template = 'thank_you.html';
         } else {
