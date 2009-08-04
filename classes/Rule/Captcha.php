@@ -42,72 +42,41 @@
  */
 
 /**
- * Form Page of enquiry module
+ * Abstract base class for QuickForm validation rules 
+ */
+require_once 'HTML/QuickForm/Rule.php';
+
+/**
+ * Captcha elements validation
  *
- * @category Modules
- * @package  Enquiry
- * @author   Andry A. Viktorov <nasa51@osmonitoring.com>
+ * @category HTML
+ * @package  HTML_QuickForm
+ * @author   Andrew Viktorov <nasa51@osmonitoring.com>
  * @license  http://opensource.org/licenses/bsd-license.php BSD License
  * @link     http://github.com/yviktorov/seagull_module_enquiry/tree/master
  */
-class PageConfirm extends HTML_QuickForm_Page
+class HTML_QuickForm_Rule_Captcha extends HTML_QuickForm_Rule
 {
     /**
-     * Build specific form using cms api and process it using observers
-     *
-     * @access public
-     * @return void
-     */
-    function buildForm()
+    * Checks if a captcha is valid
+    *
+    * @param string $value   Value to check
+    * @param mixed  $options Not used yet
+    *
+    * @access public
+    * @return boolean  true if value is not empty
+    */
+    function validate($value, $options = null)
     {
-        $this->_formBuilt = true;
-        SGL_Session::set('n_captcha', SGL_Session::get('captcha'));
-
         include_once SGL_CORE_DIR . '/Captcha.php';
         $captcha = new SGL_Captcha();
-
-        // set code in users session
-        $oCaptcha = $captcha->generateCaptcha();
-        $this->addElement(
-            'html',
-            '<pre>' . $oCaptcha . '</pre>'
-        );
-        $this->addElement(
-            'text',
-            'captcha',
-            SGL_String::translate('Captcha'),
-            array('size' => 50, 'maxlength' => 255)
-        );
-        //  submit
-        $prevnext[] =& $this->createElement(
-            'submit',
-            $this->getButtonName('back'),
-            SGL_String::translate('<< Back')
-        );
-        $prevnext[] =& $this->createElement(
-            'submit',
-            $this->getButtonName('next'),
-            SGL_String::translate('Confirm >>')
-        );
-        $this->addGroup($prevnext, 'button', '', '&nbsp;', false);
-
-        $this->registerRule(
-            'captchaCheck',
-            '',
-            'HTML_QuickForm_Rule_Captcha',
-            SGL_MOD_DIR . '/enquiry/classes/Rule/Captcha.php'
-        );
-        $this->addRule(
-            'captcha',
-            'You must enter the number in this field',
-            'captchaCheck'
-        );
-        $this->addRule(
-            'captcha',
-            'You must enter the number in this field',
-            'required'
-        );
-
-        $this->setDefaultAction('next');
+        if (!empty($value)
+            && $value != ''
+            && SGL_Session::get('n_captcha') == $value
+        ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
