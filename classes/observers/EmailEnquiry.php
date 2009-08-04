@@ -40,7 +40,7 @@
  * @version   SVN: $Id$
  * @link      http://github.com/yviktorov/seagull_module_enquiry/tree/master
  */
-
+require_once SGL_LIB_DIR . '/SGL/Emailer2.php';
 /**
  * Enquiry observer to email data to administrator
  *
@@ -63,8 +63,28 @@ class EmailEnquiry extends SGL_Observer
     public function update($observable)
     {
         // email enquiry
-        // $observable->output->wizardData;
-        $bEmailSent = true;
+        $c = &SGL_Config::singleton();
+
+        // delivery options
+        $aDeliveryOpts['toEmail']  = $c->aProps['email']['admin'];
+        $aDeliveryOpts['toRealName'] = 'Admin';
+
+        $aDeliveryOpts['fromEmail'] = $observable->output->wizardData['email'];
+        $aDeliveryOpts['fromRealName']  = $observable->output->wizardData['name'];
+
+        $aDeliveryOpts['subject']  = 'Contact Enquiry from ' . $c->aProps['site']['name'];
+
+        // template vars
+        if (isset($observable->output->wizardData['captcha'])) unset($observable->output->wizardData['captcha']);
+        $aTplOpts['data'] =  $observable->output->wizardData;
+
+        // obligatory template options
+        $aTplOpts['moduleName']    = 'enquiry';
+        $aTplOpts['htmlTemplate']  = 'mail_template.html';
+        $aTplOpts['mode'] = SGL_Emailer_Builder::MODE_HTML_ONLY;
+
+        $bEmailSent = SGL_Emailer2::send($aDeliveryOpts, $aTplOpts);
+
         if (!$bEmailSent) {
             return SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
         }
