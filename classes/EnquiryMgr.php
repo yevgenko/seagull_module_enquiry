@@ -43,6 +43,7 @@
  */
 
 require_once SGL_MOD_DIR . '/cms/lib/Content.php';
+require_once SGL_MOD_DIR . '/enquiry/classes/AddEnquiry.php';
 
 /**
  * To allow users to submit specific enquiries
@@ -176,13 +177,25 @@ class EnquiryMgr extends SGL_Manager
         $page = $controller->getPage($pageName);
 
         // Set page output vars
-        if ($pageName == 'page_confirm') {
+        if ($pageName != 'page_form') {
             $output->wizardData = $page->wizardData;
         }
 
         if (!isset($page->wizardOutput)) {
-            // Do somsing - data is submited
             $output->template = 'thank_you.html';
+
+            // build observers
+            $addEnquiry = new Enquiry_AddEnquiry($input, $output);
+            $aObservers = explode(',', $this->conf['EnquiryMgr']['observers']);
+            foreach ($aObservers as $observer) {
+                $path = SGL_MOD_DIR . "/enquiry/classes/observers/$observer.php";
+                if (is_file($path)) {
+                    include_once $path;
+                    $addEnquiry->attach(new $observer());
+                }
+            }
+            // notify observers
+            $addEnquiry->run();
         } else {
             $output->wizardOutput = $page->wizardOutput;
         }
