@@ -80,7 +80,7 @@ class EmailEnquiry extends SGL_Observer
 
         // obligatory template options
         $aTplOpts['moduleName']    = 'enquiry';
-        $aTplOpts['htmlTemplate']  = 'mail_template.html';
+        $aTplOpts['htmlTemplate']  = 'email_template.html';
         $aTplOpts['mode'] = SGL_Emailer_Builder::MODE_HTML_ONLY;
 
         $bEmailSent = SGL_Emailer2::send($aDeliveryOpts, $aTplOpts);
