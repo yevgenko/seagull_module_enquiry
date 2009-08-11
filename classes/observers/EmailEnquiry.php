@@ -66,8 +66,8 @@ class EmailEnquiry extends SGL_Observer
         $c = &SGL_Config::singleton();
 
         // delivery options
-        $aDeliveryOpts['toEmail']  = $c->aProps['email']['admin'];
-        $aDeliveryOpts['toRealName'] = 'Admin';
+        $aDeliveryOpts['toEmail']  = $c->aProps['email']['info'];
+        $aDeliveryOpts['toRealName'] = 'Info contact';
 
         $aDeliveryOpts['fromEmail'] = $observable->output->wizardData['email'];
         $aDeliveryOpts['fromRealName']  = $observable->output->wizardData['name'];
