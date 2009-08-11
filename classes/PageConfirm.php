@@ -70,7 +70,9 @@ class PageConfirm extends HTML_QuickForm_Page
         $oCaptcha = $captcha->generateCaptcha();
         $this->addElement(
             'html',
-            '<pre>' . $oCaptcha . '</pre>'
+            '<b>Human verification</b>'.
+            ' (please, enter the number you see below into captcha field)'.
+            '<br/><br/><pre>' . $oCaptcha . '</pre>'
         );
         $this->addElement(
             'text',
