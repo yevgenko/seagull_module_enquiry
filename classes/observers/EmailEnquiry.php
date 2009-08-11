@@ -70,12 +70,15 @@ class EmailEnquiry extends SGL_Observer
         $aDeliveryOpts['toRealName'] = 'Info contact';
 
         $aDeliveryOpts['fromEmail'] = $observable->output->wizardData['email'];
-        $aDeliveryOpts['fromRealName']  = $observable->output->wizardData['name'];
+        $aDeliveryOpts['fromRealName'] = $observable->output->wizardData['name'];
 
-        $aDeliveryOpts['subject']  = 'Contact Enquiry from ' . $c->aProps['site']['name'];
+        $aDeliveryOpts['subject']
+            = 'Contact Enquiry from ' . $c->aProps['site']['name'];
 
         // template vars
-        if (isset($observable->output->wizardData['captcha'])) unset($observable->output->wizardData['captcha']);
+        if (isset($observable->output->wizardData['captcha'])) {
+            unset($observable->output->wizardData['captcha']);
+        }
         $aTplOpts['data'] =  $observable->output->wizardData;
 
         // obligatory template options
