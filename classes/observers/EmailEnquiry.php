@@ -47,6 +47,7 @@ require_once SGL_LIB_DIR . '/SGL/Emailer2.php';
  * @category Modules
  * @package  Enquiry
  * @author   Yevgeniy A. Viktorov <wik@osmonitoring.com>
+ * @author   Andrew A. Viktorov <nasa51@osmonitoring.com>
  * @license  http://opensource.org/licenses/bsd-license.php BSD License
  * @link     http://github.com/yviktorov/seagull_module_enquiry/tree/master
  */
