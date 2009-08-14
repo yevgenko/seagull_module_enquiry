@@ -178,6 +178,10 @@ class EnquiryMgr extends SGL_Manager
 
         // Set page output vars
         if ($pageName != 'page_form') {
+            if (isset($page->wizardData['captcha'])) {
+                unset($page->wizardData['captcha']);
+                $controller->setConstants(array('captcha' => ''));
+            }
             $output->wizardData = $page->wizardData;
         }
 
