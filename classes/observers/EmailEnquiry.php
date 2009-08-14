@@ -65,13 +65,21 @@ class EmailEnquiry extends SGL_Observer
     {
         // email enquiry
         $c = &SGL_Config::singleton();
-
+        $this->conf = $c->ensureModuleConfigLoaded('enquiry');
         // delivery options
         $aDeliveryOpts['toEmail']  = $c->aProps['email']['info'];
         $aDeliveryOpts['toRealName'] = 'Info contact';
 
-        $aDeliveryOpts['fromEmail'] = $observable->output->wizardData['email'];
-        $aDeliveryOpts['fromRealName'] = $observable->output->wizardData['name'];
+        if (isset($this->conf['EnquiryMgr']['fromAddress'])
+            && $this->conf['EnquiryMgr']['fromAddress'] != ''
+        ) {
+            $from_address = explode(', ', $this->conf['EnquiryMgr']['fromAddress']);
+            $aDeliveryOpts['fromEmail'] = $from_address[1];
+            $aDeliveryOpts['fromRealName'] = $from_address[0];
+        } else {
+            $aDeliveryOpts['fromEmail'] = $observable->output->wizardData['email'];
+            $aDeliveryOpts['fromRealName'] = $observable->output->wizardData['name'];
+        }
 
         $aDeliveryOpts['subject']
             = 'Contact Enquiry from ' . $c->aProps['site']['name'];
