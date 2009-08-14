@@ -143,7 +143,17 @@ class EnquiryMgr extends SGL_Manager
                 = SGL_Attribute::getById($element->id);
         }
 
-        $output->template = 'form.html';
+        $templateFile
+            = 'contentTypes/' .
+                SGL_Inflector::camelise($input->oContentType->typeName) . '.html';
+        $templatePath1
+            = SGL_WEB_ROOT .
+                '/themes/' .
+                $this->conf['site']['defaultTheme'] . '/enquiry/' . $templateFile;
+        $templatePath2 = SGL_MOD_DIR . '/enquiry/templates/' . $templateFile;
+        $output->template = (is_file($templatePath1) || is_file($templatePath2))
+            ? $templateFile
+            : 'form.html';
 
         include_once SGL_LIB_DIR . '/SGL/WizardController.php';
         include_once 'PageForm.php';
