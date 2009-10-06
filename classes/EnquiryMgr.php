@@ -68,8 +68,13 @@ class EnquiryMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        // override default prefix for the methods names
-        $this->_methodNamePrefix = 'execute';
+        /**
+         * Override default prefix for the methods names.
+         *
+         * Better coding standards, but not compatible with
+         * original Seagull 6.x
+         */
+        //$this->_methodNamePrefix = 'execute';
 
         // set default title
         $this->pageTitle = 'Enquiry';
@@ -134,7 +139,7 @@ class EnquiryMgr extends SGL_Manager
      * @access public
      * @return void
      */
-    public function executeForm($input, $output)
+    public function _cmd_form($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
