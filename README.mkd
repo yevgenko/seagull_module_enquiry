@@ -1,0 +1,37 @@
+# Enquiry module
+
+This is a module for [Seagull PHP Framework][1] with the help of which you can construct dynamic, [CMS][2] based, enquiry forms for the visitors of your website. It can be used as alternative to [ContactUs][3] module.
+
+## Forms
+
+The module have dynamic forms which you can construct with the help of [CMS][2] module.
+
+## Templates
+
+Just like for [CMS][2] module, you can create custom template page for every content type.
+Also, the enquiry module, utilizing the [HTML_QuickForm][5] package with the help of which you can change form layout with no breaks in logic.
+
+## Observers
+
+Finally, module will log, email or do other with submitted data, depend on observer(s) you select.
+
+## Instruction
+
+During installation the `ContactUs` content type will be created.
+And **Contact Us** menu items will be added.
+
+*Use them as examples when creating new forms ;)*
+
+## TODO
+
+ * ability to specify mandatory fields within cms backend, maybe special prefix/postfix for the name of the attribute?
+ * need a way to choose another renderer with no changes in code
+ * add renderer for [YAML-based form styling][4]
+ * improve client-side validation, make it compatible with [YAML-based form styling][4]
+ * add more instructions
+
+[1]: http://seagullproject.org/
+[2]: http://trac.seagullproject.org/wiki/Modules/Cms
+[3]: http://trac.seagullproject.org/wiki/Modules/ContactUs
+[4]: http://www.yaml.de/fileadmin/examples/01_layouts_basics/building_forms.html
+[5]: http://pear.php.net/package/HTML_QuickForm
