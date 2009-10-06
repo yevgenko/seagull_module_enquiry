@@ -148,7 +148,17 @@ class EnquiryMgr extends SGL_Manager
                 = SGL_Attribute::getById($element->id);
         }
 
-        $output->template = 'form.html';
+        $templateFile
+            = 'contentTypes/' .
+                SGL_Inflector::camelise($input->oContentType->typeName) . '.html';
+        $templatePath1
+            = SGL_WEB_ROOT .
+                '/themes/' .
+                $this->conf['site']['defaultTheme'] . '/enquiry/' . $templateFile;
+        $templatePath2 = SGL_MOD_DIR . '/enquiry/templates/' . $templateFile;
+        $output->template = (is_file($templatePath1) || is_file($templatePath2))
+            ? $templateFile
+            : 'form.html';
 
         include_once SGL_LIB_DIR . '/SGL/WizardController.php';
         include_once 'PageForm.php';
@@ -183,6 +193,10 @@ class EnquiryMgr extends SGL_Manager
 
         // Set page output vars
         if ($pageName != 'page_form') {
+            if (isset($page->wizardData['captcha'])) {
+                unset($page->wizardData['captcha']);
+                $controller->setConstants(array('captcha' => ''));
+            }
             $output->wizardData = $page->wizardData;
         }
 
